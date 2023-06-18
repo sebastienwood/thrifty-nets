@@ -16,6 +16,8 @@ import numpy as np
 from ema_pytorch import EMA
 
 from thrifty import *
+from thrifty_deit import *
+from deit import *
 
 parser = argparse.ArgumentParser(description="Vincent's Training Routine")
 parser.add_argument('--device', type=str, default="cuda:0")
