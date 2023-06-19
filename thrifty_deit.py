@@ -99,7 +99,7 @@ class Block(nn.Module):
         return x
 
 
-class Layer_scale_init_Block(nn.Module):
+class Layer_scale_init_Block_thrifty(nn.Module):
     # taken from https://github.com/rwightman/pytorch-image-models/blob/master/timm/models/vision_transformer.py
     # with slight modifications
     def __init__(
@@ -335,7 +335,7 @@ class hMLP_stem(nn.Module):
         return x
 
 
-class vit_models(nn.Module):
+class vit_models_thrifty(nn.Module):
     """Vision Transformer with LayerScale (https://arxiv.org/abs/2103.17239) support
     taken from https://github.com/rwightman/pytorch-image-models/blob/master/timm/models/vision_transformer.py
     with slight modifications
@@ -477,7 +477,7 @@ class vit_models(nn.Module):
 def thrifty_deit_tiny_patch16_LS(
     pretrained=False, img_size=224, pretrained_21k=False, **kwargs
 ):
-    model = vit_models(
+    model = vit_models_thrifty(
         img_size=img_size,
         patch_size=16,
         embed_dim=192,
@@ -486,7 +486,7 @@ def thrifty_deit_tiny_patch16_LS(
         mlp_ratio=4,
         qkv_bias=True,
         norm_layer=partial(nn.LayerNorm, eps=1e-6),
-        block_layers=Layer_scale_init_Block,
+        block_layers=Layer_scale_init_Block_thrifty,
         **kwargs
     )
 
@@ -497,7 +497,7 @@ def thrifty_deit_tiny_patch16_LS(
 def thrifty_deit_small_patch16_LS(
     pretrained=False, img_size=224, pretrained_21k=False, **kwargs
 ):
-    model = vit_models(
+    model = vit_models_thrifty(
         img_size=img_size,
         patch_size=16,
         embed_dim=384,
@@ -506,7 +506,7 @@ def thrifty_deit_small_patch16_LS(
         mlp_ratio=4,
         qkv_bias=True,
         norm_layer=partial(nn.LayerNorm, eps=1e-6),
-        block_layers=Layer_scale_init_Block,
+        block_layers=Layer_scale_init_Block_thrifty,
         **kwargs
     )
     model.default_cfg = _cfg()
@@ -529,7 +529,7 @@ def thrifty_deit_small_patch16_LS(
 def thrifty_deit_medium_patch16_LS(
     pretrained=False, img_size=224, pretrained_21k=False, **kwargs
 ):
-    model = vit_models(
+    model = vit_models_thrifty(
         patch_size=16,
         embed_dim=512,
         depth=12,
@@ -537,7 +537,7 @@ def thrifty_deit_medium_patch16_LS(
         mlp_ratio=4,
         qkv_bias=True,
         norm_layer=partial(nn.LayerNorm, eps=1e-6),
-        block_layers=Layer_scale_init_Block,
+        block_layers=Layer_scale_init_Block_thrifty,
         **kwargs
     )
     model.default_cfg = _cfg()
@@ -561,7 +561,7 @@ def thrifty_deit_medium_patch16_LS(
 def thrifty_deit_base_patch16_LS(
     pretrained=False, img_size=224, pretrained_21k=False, **kwargs
 ):
-    model = vit_models(
+    model = vit_models_thrifty(
         img_size=img_size,
         patch_size=16,
         embed_dim=768,
@@ -570,7 +570,7 @@ def thrifty_deit_base_patch16_LS(
         mlp_ratio=4,
         qkv_bias=True,
         norm_layer=partial(nn.LayerNorm, eps=1e-6),
-        block_layers=Layer_scale_init_Block,
+        block_layers=Layer_scale_init_Block_thrifty,
         **kwargs
     )
     if pretrained:
@@ -591,7 +591,7 @@ def thrifty_deit_base_patch16_LS(
 def thrifty_deit_large_patch16_LS(
     pretrained=False, img_size=224, pretrained_21k=False, **kwargs
 ):
-    model = vit_models(
+    model = vit_models_thrifty(
         img_size=img_size,
         patch_size=16,
         embed_dim=1024,
@@ -600,7 +600,7 @@ def thrifty_deit_large_patch16_LS(
         mlp_ratio=4,
         qkv_bias=True,
         norm_layer=partial(nn.LayerNorm, eps=1e-6),
-        block_layers=Layer_scale_init_Block,
+        block_layers=Layer_scale_init_Block_thrifty,
         **kwargs
     )
     if pretrained:
@@ -621,7 +621,7 @@ def thrifty_deit_large_patch16_LS(
 def thrifty_deit_huge_patch14_LS(
     pretrained=False, img_size=224, pretrained_21k=False, **kwargs
 ):
-    model = vit_models(
+    model = vit_models_thrifty(
         img_size=img_size,
         patch_size=14,
         embed_dim=1280,
@@ -630,7 +630,7 @@ def thrifty_deit_huge_patch14_LS(
         mlp_ratio=4,
         qkv_bias=True,
         norm_layer=partial(nn.LayerNorm, eps=1e-6),
-        block_layers=Layer_scale_init_Block,
+        block_layers=Layer_scale_init_Block_thrifty,
         **kwargs
     )
     if pretrained:
@@ -651,7 +651,7 @@ def thrifty_deit_huge_patch14_LS(
 def thrifty_deit_huge_patch14_52_LS(
     pretrained=False, img_size=224, pretrained_21k=False, **kwargs
 ):
-    model = vit_models(
+    model = vit_models_thrifty(
         img_size=img_size,
         patch_size=14,
         embed_dim=1280,
@@ -660,7 +660,7 @@ def thrifty_deit_huge_patch14_52_LS(
         mlp_ratio=4,
         qkv_bias=True,
         norm_layer=partial(nn.LayerNorm, eps=1e-6),
-        block_layers=Layer_scale_init_Block,
+        block_layers=Layer_scale_init_Block_thrifty,
         **kwargs
     )
 
@@ -671,7 +671,7 @@ def thrifty_deit_huge_patch14_52_LS(
 def thrifty_deit_huge_patch14_26x2_LS(
     pretrained=False, img_size=224, pretrained_21k=False, **kwargs
 ):
-    model = vit_models(
+    model = vit_models_thrifty(
         img_size=img_size,
         patch_size=14,
         embed_dim=1280,
@@ -691,7 +691,7 @@ def thrifty_deit_huge_patch14_26x2_LS(
 def thrifty_deit_Giant_48x2_patch14_LS(
     pretrained=False, img_size=224, pretrained_21k=False, **kwargs
 ):
-    model = vit_models(
+    model = vit_models_thrifty(
         img_size=img_size,
         patch_size=14,
         embed_dim=1664,
@@ -711,7 +711,7 @@ def thrifty_deit_Giant_48x2_patch14_LS(
 def thrifty_deit_giant_40x2_patch14_LS(
     pretrained=False, img_size=224, pretrained_21k=False, **kwargs
 ):
-    model = vit_models(
+    model = vit_models_thrifty(
         img_size=img_size,
         patch_size=14,
         embed_dim=1408,
@@ -730,7 +730,7 @@ def thrifty_deit_giant_40x2_patch14_LS(
 def thrifty_deit_Giant_48_patch14_LS(
     pretrained=False, img_size=224, pretrained_21k=False, **kwargs
 ):
-    model = vit_models(
+    model = vit_models_thrifty(
         img_size=img_size,
         patch_size=14,
         embed_dim=1664,
@@ -739,7 +739,7 @@ def thrifty_deit_Giant_48_patch14_LS(
         mlp_ratio=4,
         qkv_bias=True,
         norm_layer=partial(nn.LayerNorm, eps=1e-6),
-        block_layers=Layer_scale_init_Block,
+        block_layers=Layer_scale_init_Block_thrifty,
         **kwargs
     )
     return model
@@ -749,7 +749,7 @@ def thrifty_deit_Giant_48_patch14_LS(
 def thrifty_deit_giant_40_patch14_LS(
     pretrained=False, img_size=224, pretrained_21k=False, **kwargs
 ):
-    model = vit_models(
+    model = vit_models_thrifty(
         img_size=img_size,
         patch_size=14,
         embed_dim=1408,
@@ -758,7 +758,7 @@ def thrifty_deit_giant_40_patch14_LS(
         mlp_ratio=4,
         qkv_bias=True,
         norm_layer=partial(nn.LayerNorm, eps=1e-6),
-        block_layers=Layer_scale_init_Block,
+        block_layers=Layer_scale_init_Block_thrifty,
         **kwargs
     )
     # model.default_cfg = _cfg()
@@ -773,7 +773,7 @@ def thrifty_deit_giant_40_patch14_LS(
 def thrifty_deit_small_patch16_36_LS(
     pretrained=False, img_size=224, pretrained_21k=False, **kwargs
 ):
-    model = vit_models(
+    model = vit_models_thrifty(
         img_size=img_size,
         patch_size=16,
         embed_dim=384,
@@ -782,7 +782,7 @@ def thrifty_deit_small_patch16_36_LS(
         mlp_ratio=4,
         qkv_bias=True,
         norm_layer=partial(nn.LayerNorm, eps=1e-6),
-        block_layers=Layer_scale_init_Block,
+        block_layers=Layer_scale_init_Block_thrifty,
         **kwargs
     )
 
@@ -793,7 +793,7 @@ def thrifty_deit_small_patch16_36_LS(
 def thrifty_deit_small_patch16_36(
     pretrained=False, img_size=224, pretrained_21k=False, **kwargs
 ):
-    model = vit_models(
+    model = vit_models_thrifty(
         img_size=img_size,
         patch_size=16,
         embed_dim=384,
@@ -812,7 +812,7 @@ def thrifty_deit_small_patch16_36(
 def thrifty_deit_small_patch16_18x2_LS(
     pretrained=False, img_size=224, pretrained_21k=False, **kwargs
 ):
-    model = vit_models(
+    model = vit_models_thrifty(
         img_size=img_size,
         patch_size=16,
         embed_dim=384,
@@ -832,7 +832,7 @@ def thrifty_deit_small_patch16_18x2_LS(
 def thrifty_deit_small_patch16_18x2(
     pretrained=False, img_size=224, pretrained_21k=False, **kwargs
 ):
-    model = vit_models(
+    model = vit_models_thrifty(
         img_size=img_size,
         patch_size=16,
         embed_dim=384,
@@ -852,7 +852,7 @@ def thrifty_deit_small_patch16_18x2(
 def thrifty_deit_base_patch16_18x2_LS(
     pretrained=False, img_size=224, pretrained_21k=False, **kwargs
 ):
-    model = vit_models(
+    model = vit_models_thrifty(
         img_size=img_size,
         patch_size=16,
         embed_dim=768,
@@ -872,7 +872,7 @@ def thrifty_deit_base_patch16_18x2_LS(
 def thrifty_deit_base_patch16_18x2(
     pretrained=False, img_size=224, pretrained_21k=False, **kwargs
 ):
-    model = vit_models(
+    model = vit_models_thrifty(
         img_size=img_size,
         patch_size=16,
         embed_dim=768,
@@ -892,7 +892,7 @@ def thrifty_deit_base_patch16_18x2(
 def thrifty_deit_base_patch16_36x1_LS(
     pretrained=False, img_size=224, pretrained_21k=False, **kwargs
 ):
-    model = vit_models(
+    model = vit_models_thrifty(
         img_size=img_size,
         patch_size=16,
         embed_dim=768,
@@ -901,7 +901,7 @@ def thrifty_deit_base_patch16_36x1_LS(
         mlp_ratio=4,
         qkv_bias=True,
         norm_layer=partial(nn.LayerNorm, eps=1e-6),
-        block_layers=Layer_scale_init_Block,
+        block_layers=Layer_scale_init_Block_thrifty,
         **kwargs
     )
 
@@ -912,7 +912,7 @@ def thrifty_deit_base_patch16_36x1_LS(
 def thrifty_deit_base_patch16_36x1(
     pretrained=False, img_size=224, pretrained_21k=False, **kwargs
 ):
-    model = vit_models(
+    model = vit_models_thrifty(
         img_size=img_size,
         patch_size=16,
         embed_dim=768,

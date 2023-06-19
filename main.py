@@ -16,8 +16,11 @@ import numpy as np
 from ema_pytorch import EMA
 
 from thrifty import *
+
 from thrifty_deit import *
+from thrifty_deit import vit_models_thrifty, Layer_scale_init_Block_thrifty
 from deit import *
+from deit import vit_models, Layer_scale_init_Block, PatchEmbed
 
 parser = argparse.ArgumentParser(description="Vincent's Training Routine")
 parser.add_argument('--device', type=str, default="cuda:0")
@@ -32,11 +35,13 @@ parser.add_argument('--label-smoothing', type=float, default=0.1)
 parser.add_argument('--model', type=str, default="thrifty18")
 parser.add_argument('--adam', action="store_true")
 args = parser.parse_args()
+print(args)
 
 random.seed(args.seed)
 torch.manual_seed(args.seed)
 np.random.seed(args.seed)
-torch.use_deterministic_algorithms(True)
+if not 'deit' in args.model:
+    torch.use_deterministic_algorithms(True)
 print("random seed is", args.seed)
 
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
@@ -100,7 +105,7 @@ test_loader = torch.utils.data.DataLoader(
         test, batch_size=args.batch_size, shuffle=False,
         num_workers=30)
 
-net = eval(args.model)(num_classes, large_input, args.width).to(args.device)
+net = eval(args.model)(num_classes=num_classes, large_input=large_input, width=args.width).to(args.device)
 num_parameters = int(torch.tensor([x.numel() for x in net.parameters()]).sum().item())
 print("{:d} parameters".format(num_parameters))
 
@@ -114,23 +119,56 @@ ema = EMA(
 criterion = nn.CrossEntropyLoss(reduction = 'none', label_smoothing=args.label_smoothing)
 
 modules = [x for x in net.modules()]
+tracked = set()
 wd = []
 nowd = []
 trained_parameters = 0
+norms = (nn.BatchNorm2d, nn.LayerNorm)
+vits = (vit_models_thrifty, vit_models)
+vits_block = (Layer_scale_init_Block, Layer_scale_init_Block_thrifty)
 for x in modules:
-    if isinstance(x, nn.BatchNorm2d) or isinstance(x, nn.Linear):
-        if isinstance(x, nn.BatchNorm2d):
+    if isinstance(x, norms) or isinstance(x, nn.Linear):
+        if isinstance(x, norms):
             nowd.append(x.weight)
             trained_parameters += x.weight.numel()
         else:
             wd.append(x.weight)
             trained_parameters += x.weight.numel()
+        if x.weight in tracked or x.bias in tracked:
+            raise ValueError(x, ' already tracked')
+        tracked.add(x.weight)
+        tracked.add(x.bias)
         nowd.append(x.bias)
         trained_parameters += x.bias.numel()
     elif isinstance(x, nn.Conv2d):
+        if x.weight in tracked:
+            raise ValueError(x, ' already tracked')
+        tracked.add(x.weight)
         wd.append(x.weight)
         trained_parameters += x.weight.numel()
-assert(num_parameters == trained_parameters)
+        if x.bias is not None:
+            tracked.add(x.bias)
+            nowd.append(x.bias)
+            trained_parameters += x.bias.numel()
+    elif isinstance(x, vits):
+        if x.cls_token in tracked or x.pos_embed in tracked:
+            raise ValueError(x, ' already tracked')
+        tracked.add(x.cls_token)
+        tracked.add(x.pos_embed)
+        nowd.extend([x.cls_token, x.pos_embed])
+        trained_parameters += x.cls_token.numel() + x.pos_embed.numel()
+    elif isinstance(x, vits_block):
+        if x.gamma_1 in tracked or x.gamma_2 in tracked:
+            raise ValueError(x, ' already tracked')
+        tracked.add(x.gamma_1)
+        tracked.add(x.gamma_2)
+        wd.extend([x.gamma_1, x.gamma_2])
+        trained_parameters += x.gamma_1.numel() + x.gamma_2.numel()
+
+for n, x in net.named_parameters():
+    if x not in tracked:
+        print(n, ' is not tracked')
+assert(num_parameters == trained_parameters), f'{num_parameters=} != {trained_parameters=}'
 
 train_losses = []
 test_scores = []
